@@ -9,7 +9,7 @@ from nltk.stem import WordNetLemmatizer #Para pasar las palabras a su forma raí
 #Para crear la red neuronal
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
-from keras.optimizers import sgd_experimental
+from keras.optimizers import RMSprop
 
 lemmatizer = WordNetLemmatizer()
 
@@ -52,8 +52,8 @@ for document in documents:
     output_row[classes.index(document[1])] = 1
     training.append([bag, output_row])
 random.shuffle(training)
-training = np.array(training) 
 print(training) 
+training = np.array(training, dtype="object") 
 
 #Reparte los datos para pasarlos a la red
 train_x = list(training[:,0])
@@ -68,7 +68,7 @@ model.add(Dropout(0.5))
 model.add(Dense(len(train_y[0]), activation='softmax'))
 
 #Creamos el optimizador y lo compilamos
-sgd = sgd_experimental.SGD(learning_rate=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+sgd = RMSprop(learning_rate=0.001)
 model.compile(loss='categorical_crossentropy', optimizer = sgd, metrics = ['accuracy'])
 
 #Entrenamos el modelo y lo guardamos
